@@ -10,6 +10,7 @@ let chatData = document.querySelector("chat-data");
 let alert = document.querySelector("#alert");
 
 //Functions
+//modifie les flags de data-load de div#loader. Si tous les flags sont à 1 ça indique au script que tout les paramètres initialisés et les éléments chargés localement.
 function modifyLoader(offset, val){
     let tabContent = loader.dataset.load;
     let newContent = "";
@@ -19,6 +20,7 @@ function modifyLoader(offset, val){
     }
     loader.dataset.load = newContent;
 }
+//vérifie si tous les flags data-load de div#loader sont à 1, ce qui veut dire que tout est chargé.
 function isLoaded(){
     let tabContent = loader.dataset.load;
     let loaded = true;
@@ -28,12 +30,12 @@ function isLoaded(){
 
     if(loaded) loader.classList.add('hidden');
     else loader.classList.remove('hidden');
-
     return loaded;
 }
 function empty(letvar){
     return letvar == "" || letvar == undefined || letvar == false || letvar == null;
 }
+//modifie plusieurs classes d'un élément.
 function changeMultipleClass(elem, stringAdd = "", stringRemove = ""){
     if(empty(elem)){
         if(!empty(stringAdd)){
@@ -50,6 +52,7 @@ function changeMultipleClass(elem, stringAdd = "", stringRemove = ""){
         }
     }
 }
+//Gère les erreur, warnings et messages renvoyés par les scripts ajax. Les affiche s'il y en a sinon renvoie la réponse décapsulée.
 function processAjaxResponse(tabResp){
     if(tabResp.errors.length > 0){
         let msg = alert.querySelector(".msg").innerHTML = "";
@@ -84,7 +87,7 @@ function processAjaxResponse(tabResp){
             if(i<tabResp.infos.length-1) msg.innerHTML += "<br/>";
         }
     }
-    return tabResp.response;
+    return (empty(tabResp.response))?false:tabResp.response;
 }
 async function getScriptPromise(phpScript, rq = "") {
     if(rq!="" && rq[0]!="?") rq = "?"+rq;
@@ -92,14 +95,11 @@ async function getScriptPromise(phpScript, rq = "") {
     const tabResp = await JsonResp.json();
     return processAjaxResponse(tabResp);;
 }
-  
-// Appelez la fonction pour exécuter le script PHP et utiliser la réponse
-getScriptPromise("initSession").then((dt) => {
-    console.log(dt);
-});
+
 
 
 //Init elements
+//MutationObserveur détecte les changements de flags de data-load de div#loader. Si tous les flags sont à 1 il indiquera que la page est chargée et initialisée.
 document.body.onload = () => {
     modifyLoader(0,1);
 }
@@ -110,7 +110,10 @@ let observer = new MutationObserver(function(mutations) {
         }
     });
 });
-observer.observe(loader, { attributes: true });
+observer.observe(loader, { attributes: true });  
 
-//Chargement de chat-data
-chatData.dataset.hello = "world!";
+// Appelez la fonction pour exécuter le script PHP et utiliser la réponse
+getScriptPromise("initSession").then((response) => {
+    //Je déclare le script php initialisé et prêt
+    if(response) modifyLoader(1,1);
+});
