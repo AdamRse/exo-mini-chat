@@ -14,3 +14,4 @@ class Bdd extends PDO {
     }
 
 }
+$Bdd = new Bdd();
