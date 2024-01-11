@@ -5,9 +5,15 @@ let warningClasses = "text-orange-900 bg-orange-200";
 let infoClasses = "text-blue-900 bg-blue-200";
 
 //Init var
+let user = false;
 let loader = document.body.querySelector('#loader');
 let chatData = document.querySelector("chat-data");
 let alert = document.querySelector("#alert");
+let login = document.querySelector("#login");
+
+let page = document.querySelector("#page");
+let formInscription = document.querySelector("#inscription");
+let chat = document.querySelector("#chat");
 
 //Functions
 //modifie les flags de data-load de div#loader. Si tous les flags sont à 1 ça indique au script que tout les paramètres initialisés et les éléments chargés localement.
@@ -55,7 +61,8 @@ function changeMultipleClass(elem, stringAdd = "", stringRemove = ""){
 //Gère les erreur, warnings et messages renvoyés par les scripts ajax. Les affiche s'il y en a sinon renvoie la réponse décapsulée.
 function processAjaxResponse(tabResp){
     if(tabResp.errors.length > 0){
-        let msg = alert.querySelector(".msg").innerHTML = "";
+        let msg = alert.querySelector(".msg");
+        msg.innerHTML = "";
         alert.classList.remove("hidden");
         changeMultipleClass(alert.querySelector("#box"), errorClasses, warningClasses+" "+infoClasses);
         alert.querySelector(".titre").innerHTML = "Erreur";
@@ -66,7 +73,7 @@ function processAjaxResponse(tabResp){
         }
     }
     else if(tabResp.warnings.length > 0){
-        let msg = alert.querySelector(".msg").innerHTML = "";
+        let msg = alert.querySelector(".msg");
         alert.classList.remove("hidden");
         changeMultipleClass(alert.querySelector("#box"), warningClasses, errorClasses+" "+infoClasses);
         alert.querySelector(".titre").innerHTML = "Attention";
@@ -77,7 +84,7 @@ function processAjaxResponse(tabResp){
         }
     }
     else if(tabResp.infos.length > 0){
-        let msg = alert.querySelector(".msg").innerHTML = "";
+        let msg = alert.querySelector(".msg");
         alert.classList.remove("hidden");
         changeMultipleClass(alert.querySelector("#box"), infoClasses, errorClasses+" "+warningClasses);
         alert.querySelector(".titre").innerHTML = "Info";
@@ -89,11 +96,18 @@ function processAjaxResponse(tabResp){
     }
     return (empty(tabResp.response))?false:tabResp.response;
 }
+function changePage(newElem){
+    page.innerHTML = "";
+    let cloneElem = newElem.cloneNode(true);
+    cloneElem.id = "elemPage"
+    page.appendChild(cloneElem);
+    loadScript(newElem.id);
+}
 async function getScriptPromise(phpScript, rq = "") {
     if(rq!="" && rq[0]!="?") rq = "?"+rq;
     const JsonResp = await fetch("./ajax_scripts/"+phpScript+".php"+rq);
     const tabResp = await JsonResp.json();
-    return processAjaxResponse(tabResp);;
+    return processAjaxResponse(tabResp);
 }
 
 
@@ -112,8 +126,28 @@ let observer = new MutationObserver(function(mutations) {
 });
 observer.observe(loader, { attributes: true });  
 
-// Appelez la fonction pour exécuter le script PHP et utiliser la réponse
+//Init events
+alert.addEventListener("click", function(){
+    this.classList.add("hidden");
+});
+alert.querySelector("img").addEventListener("click", function(){
+    alert.classList.add("hidden");
+});
+alert.querySelector("#box").addEventListener("click", function(e){
+    e.stopPropagation();
+})
+
+// Initialiser la session PHP
 getScriptPromise("initSession").then((response) => {
+    if(response.user){
+        //On affiche le chat
+        changePage(chat);
+    }
+    else{
+        //On affiche la page de connexion/inscription, on est déco
+        changePage(formInscription);
+    }
+
     //Je déclare le script php initialisé et prêt
     if(response) modifyLoader(1,1);
 });
