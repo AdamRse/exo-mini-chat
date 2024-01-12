@@ -1,0 +1,21 @@
+//Utiliser ajax avec un retour
+getScriptPromise("initSession").then((rt) => {
+    //response : rt.response
+
+    //retourne le premier code erreur de la réponse ajax
+    returnCodeFirstError(rt);
+})
+
+//Changer de page
+changePage(elem)
+
+//Modifier plusieurs classes d'un élément
+changeMultipleClass(elem, stringAdd, stringRemove)
+    //pour remettre les classes par défaut
+    changeMultipleClass(elem)
+
+//Est-cs string
+isString(str)
+
+//Est-ce empty
+empty(something)

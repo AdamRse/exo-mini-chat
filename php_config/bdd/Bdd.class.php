@@ -41,6 +41,11 @@ class Bdd extends PDO {
         $q->execute(array("id" => $id));
         return $q->fetch(PDO::FETCH_ASSOC);
     }
+    public function getUserName($pseudo){
+        $q = $this->prepare("SELECT * FROM users WHERE pseudo = :p");
+        $q->execute(array("p" => $pseudo));
+        return $q->fetch(PDO::FETCH_ASSOC);
+    }
     public function isUser($pseudo){
         $q = $this->prepare("SELECT * FROM users WHERE pseudo = :p");
         $q->execute(array("p" => $pseudo));

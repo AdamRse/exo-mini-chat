@@ -36,6 +36,7 @@
 
   <!-- Navbar -->
 
+
   <nav class="bg-gray-800">
     <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
       <div class="relative flex h-16 items-center justify-between">
@@ -85,19 +86,19 @@
           <!-- Profile dropdown -->
           <div class="relative ml-3">
             <div>
-              <div id="login" class="flex items-center justify-center content-end space-x-4">
+              <form id="login" class="flex items-center justify-center content-end space-x-4">
                 <label class="block text-orange-700 text-sm font-bold" for="username">
                   Username
                 </label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username">  
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="log-username" type="text" placeholder="Username">  
                 <label class="block text-orange-700 text-sm font-bold" for="pw">
                   Password
                 </label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="pw" type="password" placeholder="******************">        
-                <button class="flex-shrink-0 bg-orange-700 hover:bg-orange-900 border-orange-700 hover:border-orange-900text-sm border-4 text-white py-1 px-2 rounded" type="button">
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="log-pw" type="password" placeholder="******************">        
+                <button id="log-bt" class="flex-shrink-0 bg-orange-700 hover:bg-orange-900 border-orange-700 hover:border-orange-900text-sm border-4 text-white py-1 px-2 rounded" type="button">
                   Connexion
                 </button>
-              </div>
+              </form>
             </div>
           </div>
         </div>
@@ -120,6 +121,10 @@
 
   <div id="elements" class="hidden">
 
+    <div id="message-inline">
+      <p class="text-green-900"></p>
+    </div>
+
   <!-- Inscription form --->
     <form id="inscription" class="w-full max-w-sm">
       <div class="md:flex md:items-center mb-6">
@@ -129,7 +134,7 @@
           </label>
         </div>
         <div class="md:w-2/3">
-          <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-orange-500" id="i-pseudo" name="pseudo" type="text" placeholder="Pseudo">
+          <input value="Adam" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-orange-500" id="i-pseudo" name="pseudo" type="text" placeholder="Pseudo">
         </div>
       </div><div class="md:flex md:items-center mb-6">
         <div class="md:w-1/3">
@@ -157,7 +162,7 @@
           </label>
         </div>
         <div class="md:w-2/3">
-          <input class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-orange-500" id="i-pw" name="pw" type="password" placeholder="******************">
+          <input value="000" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-orange-500" id="i-pw" name="pw" type="password" placeholder="******************">
         </div>
       </div>
       <div class="md:flex md:items-center">
