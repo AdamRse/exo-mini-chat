@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: Jan 10, 2024 at 09:28 AM
+-- Generation Time: Jan 12, 2024 at 03:48 PM
 -- Server version: 10.6.12-MariaDB-1:10.6.12+maria~ubu2004-log
 -- PHP Version: 8.1.14
 
@@ -77,6 +77,7 @@ CREATE TABLE `users` (
   `lastname` varchar(63) DEFAULT NULL,
   `firstname` varchar(63) DEFAULT NULL,
   `pseudo` varchar(31) NOT NULL,
+  `pw` varchar(255) NOT NULL,
   `color` varchar(6) NOT NULL DEFAULT 'e06666',
   `dt_registration` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -85,8 +86,9 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `lastname`, `firstname`, `pseudo`, `color`, `dt_registration`) VALUES
-(1, 'default_lastname', 'default_firstname', 'default', 'e06666', '2024-01-10 09:24:19');
+INSERT INTO `users` (`id`, `lastname`, `firstname`, `pseudo`, `pw`, `color`, `dt_registration`) VALUES
+(1, 'default_lastname', 'default_firstname', 'default', '', 'e06666', '2024-01-10 09:24:19'),
+(21, NULL, NULL, 'adam', 'adam', 'e06666', '2024-01-12 14:20:38');
 
 --
 -- Indexes for dumped tables
@@ -111,7 +113,8 @@ ALTER TABLE `messages`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `pseudo` (`pseudo`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -133,7 +136,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- Constraints for dumped tables
