@@ -28,7 +28,7 @@ if(empty($_SESSION['user'])){
     }
 }
 else
-    $user=$_SESSION['user']['id'];
+    $user=$_SESSION['user'];
 
 $r = array(
     "user" => $user

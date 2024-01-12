@@ -11,6 +11,7 @@ let loader = document.body.querySelector('#loader');
 let chatData = document.querySelector("chat-data");
 let alert = document.querySelector("#alert");
 let login = document.querySelector("#login");
+let isLog = document.querySelector("#isLog");
 
 let page = document.querySelector("#page");
 let formInscription = document.querySelector("#inscription");
@@ -46,6 +47,25 @@ function empty(letvar){
 function isString(val){
     return typeof val === 'string' || val instanceof String;
 }
+//Charger le chat avec les données user passées
+function initPageLoggedInOut(arrayUser = false){
+    chatData = document.querySelector("chat-data");
+    if(arrayUser){//On veut se connecter
+        Object.keys(arrayUser).forEach(key => {
+            chatData.dataset[key]=arrayUser[key];
+        });
+        isLog.querySelector("span").innerHTML = arrayUser.pseudo;
+        isLog.classList.remove("hidden");
+        login.classList.add("hidden");
+        changePage(chat);
+    }
+    else{//On se déconnecte
+        isLog.classList.add("hidden");
+        login.classList.remove("hidden");
+        //remove les attributs de chat-data
+        changePage(formInscription);
+    }
+}
 //modifie plusieurs classes d'un élément.
 function changeMultipleClass(elem, stringAdd = "", stringRemove = ""){
     if(!empty(elem)){
@@ -80,9 +100,9 @@ function returnCodeFirstError(response){
 }
 //Gère l'affichage des erreur, warnings et messages renvoyés par les scripts ajax. Les affiche s'il y en a sinon renvoie la réponse décapsulée.
 function processAjaxResponse(tabResp){
+    let msg = alert.querySelector(".msg");
+    msg.innerHTML = "";
     if(tabResp.errors.length > 0){
-        let msg = alert.querySelector(".msg");
-        msg.innerHTML = "";
         alert.classList.remove("hidden");
         changeMultipleClass(alert.querySelector("#box"), errorClasses, warningClasses+" "+infoClasses);
         alert.querySelector(".titre").innerHTML = "Erreur";
@@ -98,7 +118,6 @@ function processAjaxResponse(tabResp){
         }
     }
     else if(tabResp.warnings.length > 0){
-        let msg = alert.querySelector(".msg");
         alert.classList.remove("hidden");
         changeMultipleClass(alert.querySelector("#box"), warningClasses, errorClasses+" "+infoClasses);
         alert.querySelector(".titre").innerHTML = "Attention";
@@ -114,7 +133,6 @@ function processAjaxResponse(tabResp){
         }
     }
     else if(tabResp.infos.length > 0){
-        let msg = alert.querySelector(".msg");
         alert.classList.remove("hidden");
         changeMultipleClass(alert.querySelector("#box"), infoClasses, errorClasses+" "+warningClasses);
         alert.querySelector(".titre").innerHTML = "Info";
@@ -143,7 +161,8 @@ async function getScriptPromise(phpScript, rq = "") {
     if(rq!="" && rq[0]!="?") rq = "?"+rq;
     const JsonResp = await fetch("./ajax_scripts/"+phpScript+".php"+rq);
     const tabResp = await JsonResp.json();
-    return processAjaxResponse(tabResp);
+    console.log(tabResp);
+    return (empty(tabResp))?null:processAjaxResponse(tabResp);
 }
 
 
@@ -173,6 +192,12 @@ alert.querySelector("img").addEventListener("click", function(){
 alert.querySelector("#box").addEventListener("click", function(e){
     e.stopPropagation();
 })
+//Déconnexion
+isLog.querySelector("button").addEventListener("click", function(){
+    getScriptPromise("logout").then((e) => {
+        initPageLoggedInOut();
+    });
+});
 //Demmande de login
 login.querySelector("button").addEventListener("click", function(){
     let user = login.querySelector("#log-username");
@@ -184,9 +209,10 @@ login.querySelector("button").addEventListener("click", function(){
         changeMultipleClass(pw, "bg-red-200 border-red-800");
     }
     else if(!empty(user.value)){
-        getScriptPromise("connectUser").then((rt) => {
-            if(rt.response === true){
-                changePage(chat);
+
+        getScriptPromise("connectUser", "pseudo="+user.value+"&pw="+pw.value).then((rt) => {
+            if(rt.response){
+                initPageLoggedInOut(rt.response);
             }
             else if(returnCodeFirstError(rt) == 10){
                 //form incomplet
@@ -199,13 +225,13 @@ login.querySelector("button").addEventListener("click", function(){
         });
     }
 });
-
 /////////////////////////
 // Initialiser la session PHP
-getScriptPromise("initSession").then((response) => {
-    if(response.user){
+getScriptPromise("initSession").then((rt) => {
+    if(rt.response){
         //On affiche le chat
-        changePage(chat);
+        //Foreach d'un objet pour parcourir ses méthodes
+        initPageLoggedInOut(rt.response.user);
     }
     else{
         //On affiche la page de connexion/inscription, on est déco
@@ -213,5 +239,5 @@ getScriptPromise("initSession").then((response) => {
     }
 
     //Je déclare le script php initialisé et prêt
-    if(response) modifyLoader(1,1);
+    if(rt) modifyLoader(1,1);
 });

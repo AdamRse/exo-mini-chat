@@ -14,7 +14,7 @@ if(!empty($_GET["pseudo"]) && !empty($_GET["pw"])){
                 unset($tabUser["pw"]);
                 $_SESSION['user']=$tabUser;
                 setcookie('spaceChatCnx', $tabUser['id']."!+".$_SERVER['HTTP_USER_AGENT'], time() + 3600*8);
-                $answer=true;
+                $answer=$tabUser;
             }
             else{
                 $warnings[]=array("msg" => "Mot de passe incorrect", "code" => 10);

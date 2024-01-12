@@ -22,8 +22,10 @@ class Bdd extends PDO {
         $rq = "";
         if($type == "insert"){
             foreach ($a as $col => $v) {
-                $sqlCol .= "$col, ";
-                $sqlVal .= ":$col, ";
+                if(!empty($v) || $v===0){
+                    $sqlCol .= "$col, ";
+                    $sqlVal .= ":$col, ";
+                }
             }
             $sqlCol = substr($sqlCol,0,-2);
             $sqlVal = substr($sqlVal,0,-2);
@@ -33,6 +35,7 @@ class Bdd extends PDO {
     }
 
     public function addUser($a){//["col DB"] => value
+        $a['pseudo']=strtolower($a['pseudo']);
         $q = $this->prepare($this->rqPrepareFromArray($a, "users"));
         return $q->execute($a);
     }
@@ -42,12 +45,12 @@ class Bdd extends PDO {
         return $q->fetch(PDO::FETCH_ASSOC);
     }
     public function getUserName($pseudo){
-        $q = $this->prepare("SELECT * FROM users WHERE pseudo = :p");
+        $q = $this->prepare("SELECT * FROM users WHERE pseudo = LOWER(:p)");
         $q->execute(array("p" => $pseudo));
         return $q->fetch(PDO::FETCH_ASSOC);
     }
     public function isUser($pseudo){
-        $q = $this->prepare("SELECT * FROM users WHERE pseudo = :p");
+        $q = $this->prepare("SELECT * FROM users WHERE pseudo = LOWER(:p)");
         $q->execute(array("p" => $pseudo));
         return $q->rowCount()!=0;
     }
