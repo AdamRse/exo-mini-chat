@@ -1,5 +1,7 @@
 /////////////////////////
 //Init parameters
+let autoRefresh = 10000;
+let stat = "connection";
 let errorClasses = "text-red-900 bg-red-200";
 let warningClasses = "text-orange-900 bg-orange-200";
 let infoClasses = "text-blue-900 bg-blue-200";
@@ -11,6 +13,7 @@ let loader = document.body.querySelector('#loader');
 let chatData = document.querySelector("chat-data");
 let alert = document.querySelector("#alert");
 let login = document.querySelector("#login");
+let iLogin = login.querySelectorAll("input");
 let isLog = document.querySelector("#isLog");
 
 let page = document.querySelector("#page");
@@ -57,12 +60,19 @@ function initPageLoggedInOut(arrayUser = false){
         isLog.querySelector("span").innerHTML = arrayUser.pseudo;
         isLog.classList.remove("hidden");
         login.classList.add("hidden");
+        login.querySelectorAll("input").forEach(function(e){
+            e.value = "";
+        });
         changePage(chat);
     }
     else{//On se déconnecte
+        stat = "connection";
         isLog.classList.add("hidden");
         login.classList.remove("hidden");
         //remove les attributs de chat-data
+        Object.keys(chatData.dataset).forEach(dataKey => {
+            delete chatData.dataset[dataKey];
+        });
         changePage(formInscription);
     }
 }
@@ -161,7 +171,6 @@ async function getScriptPromise(phpScript, rq = "") {
     if(rq!="" && rq[0]!="?") rq = "?"+rq;
     const JsonResp = await fetch("./ajax_scripts/"+phpScript+".php"+rq);
     const tabResp = await JsonResp.json();
-    console.log(tabResp);
     return (empty(tabResp))?null:processAjaxResponse(tabResp);
 }
 
@@ -209,7 +218,7 @@ login.querySelector("button").addEventListener("click", function(){
         changeMultipleClass(pw, "bg-red-200 border-red-800");
     }
     else if(!empty(user.value)){
-
+        console.log("click button j'envoie ", "pseudo="+user.value+"&pw="+pw.value);
         getScriptPromise("connectUser", "pseudo="+user.value+"&pw="+pw.value).then((rt) => {
             if(rt.response){
                 initPageLoggedInOut(rt.response);
@@ -223,6 +232,43 @@ login.querySelector("button").addEventListener("click", function(){
                 console.log("form connexion erreur Bdd");
             }
         });
+    }
+});
+iLogin.forEach((i) => {
+    i.addEventListener("keypress", function(e){
+        if(e.key=="Enter"){
+            let user = login.querySelector("#log-username");
+            let pw = login.querySelector("#log-pw");
+            if(empty(user.value)){
+                changeMultipleClass(user, "bg-red-200 border-red-800");
+                user.focus();
+            }
+            if(empty(pw.value)){
+                changeMultipleClass(pw, "bg-red-200 border-red-800");
+                pw.focus();
+            }
+            else if(!empty(user.value)){
+
+                getScriptPromise("connectUser", "pseudo="+user.value+"&pw="+pw.value).then((rt) => {
+                    if(rt.response){
+                        initPageLoggedInOut(rt.response);
+                    }
+                    else if(returnCodeFirstError(rt) == 10){
+                        //form incomplet
+                        console.log("form connexion incomplet");
+                    }
+                    else if(returnCodeFirstError(rt) == 11){
+                        //Erreur de Bdd
+                        console.log("form connexion erreur Bdd");
+                    }
+                });
+            }
+        }
+    })
+});
+login.querySelector("button").addEventListener("keydown", (k) => {    let user = login.querySelector("#log-username");
+    if(k.key == "Enter" && iLogin[0].value != "" && iLogin[1].value != ""){
+
     }
 });
 /////////////////////////

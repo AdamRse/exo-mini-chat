@@ -10,6 +10,7 @@ function loadScript(elemId){
 
     //Formulaire d'inscription
     if(elemId=="inscription"){
+        stat = "inscription";
         let btForm = ep.querySelector("button");
         btForm.addEventListener("click", function(){//Envoyer le formulaire d'inscription
             this.disabled=true;
@@ -48,6 +49,102 @@ function loadScript(elemId){
         });
     }
     else if(elemId=="chat"){// Chat
+        stat = "chat";
 
+        let taText = ep.querySelector(".taMessage");
+        let btSend = ep.querySelector(".sendMessage");
+        let keyDownNow = "";
+
+        
+        taText.addEventListener("keydown", (k) => {
+            let taText = ep.querySelector(".taMessage");
+            console.log(k.key);
+            if(k.key == "Enter" && taText.value != "" && keyDownNow != "Shift"){
+                    btSend.disabled = true;
+                    sendMessage();
+            }
+            keyDownNow = k.key;
+        });
+        taText.addEventListener("keyup", () => {
+            keyDownNow = "";
+        })
+        btSend.addEventListener("click", () => {
+            btSend.disabled = true;
+            sendMessage();
+        });
+
+        refreshMessage();
     }
+}
+function sendMessage(){
+    let taText = document.querySelector("#elemPage .taMessage");
+    let btSend = document.querySelector("#elemPage .sendMessage");
+    let affichage = document.querySelector("#elemPage .affichage");
+    let lastMsgId = (empty(affichage.lastChild.id))?0:affichage.lastChild.id.split("-")[1];
+    getScriptPromise("sendMsg", 'lastMsgId='+lastMsgId+'&msg='+JSON.stringify(taText.value)).then((rt) => {
+        if(rt.response){
+            if(!empty(rt.response.length)){
+                rt.response.forEach((m) => {
+                    addMessage(m.content, m.messageId, m.pseudo, m.dt_msg);
+                })
+                affichage.scrollTo(0, affichage.scrollHeight);
+                btSend.disabled = false;
+                taText.value = "";
+            }
+            else{
+                console.log("Retour non attendu de la réponse de sendMsg.php : ", rt);
+            }
+        }
+        else{
+            console.log("Le script sendMsg.php renvoie une erreur");
+        }
+    });
+}
+function refreshMessage(){
+    let affichage = document.querySelector("#elemPage .affichage");
+    let lastIdMessage = (empty(affichage.lastChild.id))?0:affichage.lastChild.id.split("-")[1];
+    let tplMessage = document.querySelector("#elemPage .tpl-message");
+    console.log("je refresh avec lastId",lastIdMessage);
+    if(lastIdMessage === 0){//On prend tous les messages
+        getScriptPromise("getMsg").then((rt) => {
+            if(rt.response){
+                if(empty(rt.response.length)){
+                    //Pas de message en BDD
+                }
+                else{
+                    affichage.innerHTML = "";
+                    rt.response.forEach((m) => {
+                        addMessage(m.content, m.messageId, m.pseudo, m.dt_msg, m.color, tplMessage, affichage)
+                    });
+                    affichage.scrollTo(0, affichage.scrollHeight);
+                }
+            }
+        });
+    }
+    else{// On prend que les messages après lastChild.id
+        getScriptPromise("refresh", "lastIdMessage="+lastIdMessage).then((rt) => {
+            if(rt.response){
+                if(rt.response!==true){//Il y a es messages à refresh
+                    rt.response.forEach((m) => {
+                        addMessage(m.content, m.messageId, m.pseudo, m.dt_msg, m.color, tplMessage, affichage)
+                    })
+                }
+            }
+        });
+    }
+    affichage.scrollTo(0, affichage.scrollHeight);
+    setTimeout(() => {
+        if(stat == "chat") refreshMessage();
+    }, autoRefresh);
+}
+function addMessage(message, idMessage, author, date, color, template = document.querySelector("#elemPage .tpl-message"), divAffichage = document.querySelector("#elemPage .affichage")){
+    let newMsg = template.cloneNode(true);
+    newMsg.id = "idm-"+idMessage;
+    newMsg.classList.remove("hidden");
+    let content = newMsg.querySelectorAll("div");
+    content[0].innerHTML = message;
+    //content[0].classList.add("");
+    content[1].innerHTML = "<b>"+author+"</b> ("+date+")";
+    content[1].style.color = "#"+color;
+    divAffichage.appendChild(newMsg);
 }

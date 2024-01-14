@@ -12,7 +12,7 @@
     <title>Space chat</title>
 </head>
 <body class="h-full">
-  <chat-data/>
+  <chat-data></chat-data>
   <div id="loader" data-load="00" class="h-full w-full fixed top-0 left-0 bg-slate-600 flex items-center justify-center z-50">
     <div class="text-center text-orange-400">
       Chargement
@@ -47,7 +47,7 @@
             <span class="sr-only">Open main menu</span>
             <!--
               Icon when menu is closed.
-  
+
               Menu open: "hidden", Menu closed: "block"
             -->
             <svg class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -55,7 +55,7 @@
             </svg>
             <!--
               Icon when menu is open.
-  
+
               Menu open: "block", Menu closed: "hidden"
             -->
             <svg class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
@@ -82,7 +82,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
             </svg>
           </button>-->
-  
+
           <!-- Profile dropdown -->
           <div class="relative ml-3">
             <div>
@@ -96,12 +96,12 @@
                 <label class="block text-orange-500 text-sm font-bold" for="username">
                   Username
                 </label>
-                <input name="user" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="log-username" type="text" placeholder="Username">  
+                <input name="user" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="log-username" type="text" placeholder="Username">
                 <label class="block text-orange-500 text-sm font-bold" for="pw">
                   Password
                 </label>
-                <input name="pw" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="log-pw" type="password" placeholder="******************">        
-                <button id="log-bt" class="flex-shrink-0 bg-orange-700 hover:bg-orange-900 border-orange-700 hover:border-orange-900text-sm border-4 text-white py-1 px-2 rounded" type="button">
+                <input name="pw" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="log-pw" type="password" placeholder="******************">
+                <button id="log-bt" class="flex-shrink-0 bg-orange-700 hover:bg-orange-900 border-orange-700 hover:border-orange-900 border-4 text-white py-1 px-2 rounded" type="button">
                   Connexion
                 </button>
               </d>
@@ -110,7 +110,7 @@
         </div>
       </div>
     </div>
-  
+
     <!-- Mobile menu, show/hide based on menu state. -->
     <div class="sm:hidden" id="mobile-menu">
       <div class="space-y-1 px-2 pb-3 pt-2">
@@ -132,7 +132,8 @@
     </div>
 
   <!-- Inscription form --->
-    <form id="inscription" class="w-full max-w-sm">
+    <form id="inscription" class="w-full max-w-md">
+      <h1 class="text-orange-500 m-5 font-bold text-2xl w-full">Nouveau membre ? Inscrivez-vous !</h1>
       <div class="md:flex md:items-center mb-6">
         <div class="md:w-1/3">
           <label class="block text-gray-500 font-bold md:text-right mb-1 md:mb-0 pr-4" for="i-pseudo">
@@ -174,7 +175,7 @@
       <div class="md:flex md:items-center">
         <div class="md:w-1/3"></div>
         <div class="md:w-2/3">
-          <button class="shadow bg-orange-700 hover:bg-orange-800 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="button">
+          <button class="shadow bg-orange-500 hover:bg-orange-800 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="button">
             Créer un compte
           </button>
         </div>
@@ -183,12 +184,37 @@
 
     <!-- Le chat-->
 
-    <div id="chat" class="bg-black">
-      <h1 class="text-orange-200">Créer le chat !!!</h1>
+    <div id="chat" class="flex flex-row w-full">
+      <!-- Partie users -->
+      <!-- <div class="basis-1/4 bg-slate-500 py-4 px-1">
+        <h1 class="text-center font-bold text-2xl">Utilisateurs</h1>
+        <div id="tpl-userConnected" class="px-2 py-3 text-right">
+          <div class="text-xl">Utilisateur</div>
+          <div class="text-sm">Dernier message</div>
+        </div>
+      </div> -->
+      <!-- Partie chat -->
+      <div class="w-full bg-slate-300">
+        <div class="affichage h-96 overflow-y-scroll">
+            <div class="tpl-message max-w-2/3 py-3 m-2 hidden">
+              <div class="p-2 rounded-lg">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Inventore, iure repellendus reiciendis aperiam delectus illum eveniet dolorem error minus voluptatibus.
+              </div>
+              <div class="text-xs px-2 py-1">Author</div>
+            </div>
+        </div>
+        <div class="flex flex-row">
+          <textarea id="" rows="1" class="taMessage resize-none p-3 w-11/12 bg-orange-200"></textarea>
+          <button id="" placeholder="tapez ici" class="sendMessage w-1/12 bg-orange-500 hover:bg-orange-400 text-white font-bold py-2 px-4 border-b-4 border-orange-700 hover:border-orange-500 rounded">
+            Envoyer
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 
-  
+
 
   <!-- Page content -->
 
@@ -198,7 +224,7 @@
   </div>
 
 
-    
+
 </body>
 <script src="./js/init.js"></script>
 <script src="./js/code.js"></script>
